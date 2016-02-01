@@ -1,9 +1,10 @@
 'use strict';
 
-app.factory('Auth', function(FURL, $firebaseAuth, $firebaseObject, $firebaseArray, $state, $http) {
+app.factory('Auth', function(FURL, $firebaseAuth, $firebaseObject, $firebaseArray, $state, $http, $ionicHistory) {
 
 	var ref = new Firebase(FURL);
 	var auth = $firebaseAuth(ref);
+	var connectedRef = new Firebase(FURL + '/.info/connected');
 
 	var Auth = {
 
@@ -42,7 +43,14 @@ app.factory('Auth', function(FURL, $firebaseAuth, $firebaseObject, $firebaseArra
 			});
 		},
 
-		logout: function() {
+		logout: function(uid) {
+			ref.child('profiles').child(uid).update({
+				isOnline: false
+			});
+
+			$ionicHistory.clearHistory();
+			$ionicHistory.clearCache();
+				
 			return auth.$unauth();
 		},
 
@@ -68,6 +76,23 @@ app.factory('Auth', function(FURL, $firebaseAuth, $firebaseObject, $firebaseArra
 
 		getProfilesByAge: function(age) {
 			return $firebaseArray(ref.child('profiles').orderByChild('age').startAt(18).endAt(age));
+		},
+
+		setOnline: function(uid){
+			var connected = $firebaseObject(connectedRef);
+			var online = $firebaseObject(ref.child('profiles').child(uid));
+
+			connected.$watch(function(){
+				if(connected.$value === true){
+					ref.child('profiles').child(uid).update({
+						isOnline: true
+					});
+
+					online.$ref().onDisconnect().update({
+						isOnline: false
+					});
+				}
+			});
 		} 				
 
 	};

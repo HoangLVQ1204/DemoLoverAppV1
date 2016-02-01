@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SettingCtrl', function(Auth, $ionicPopup, $ionicHistory) {
+app.controller('SettingCtrl', function(Auth, uid, $ionicPopup) {
 	var sett = this;
 
 	sett.maxAge = window.localStorage.getItem('maxAge') || 25;
@@ -30,11 +30,8 @@ app.controller('SettingCtrl', function(Auth, $ionicPopup, $ionicHistory) {
 		})
 		.then(function(res) {
 			if (res) {
-
-				$ionicHistory.clearHistory();
-				$ionicHistory.clearCache();
-
-				Auth.logout();
+				
+				Auth.logout(uid);
 			}
 		});
 		

@@ -2,9 +2,12 @@
 	<ion-content>
 
 		<ion-list can-swipe="true">
-			<ion-item class="item item-avatar" ng-repeat="item in matc.list">
+			<ion-item class="item item-avatar" ng-repeat="item in matc.list" ng-click="matc.openMessageModal(item.$id)">
 				<img ng-src="{{item.avatar}}">
-				<h2>{{item.name}}, {{item.age}}</h2>
+				<h2>
+					<span class="presence" ng-class="{online: item.isOnline }"></span>
+					{{item.name}}, {{item.age}}
+				</h2>
 				<p>{{item.email}}</p>
 				<p><i class="ion-location"></i> {{item.location}}</p>
 
